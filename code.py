@@ -1,5 +1,4 @@
-from re import T
-from time import time
+from random import random
 
 
 class Time:
@@ -96,7 +95,7 @@ class TimePeriod:
         return f'{self.start} - {self.end} ({self.__len__()})'
 
     def __repr__(self):
-        return f'|{self.start} - {self.end} ({self.__len__()})|'
+        return f'{self.start} - {self.end} ({self.__len__()})'
 
 
 class Day:
@@ -172,12 +171,23 @@ class Day:
                     self.busy_times.append(time_period)
                 else:
                     print(f'This time is busy ({time_period})')
+    
+    def cancel(self, time_period):
+        if time_period in self.busy_times:
+            self.busy_times.remove(time_period)
+        else:
+            print('this period is free')
 
 
 a = Day('saturday', Time(7, 0, 0), Time(12, 0, 0), False)
 
-a.add(TimePeriod(Time(1, 0, 0), Time(2, 30, 0)))
-# a.add(TimePeriod(Time(9,0,0), Time(9,30,0)))
+b = TimePeriod(Time(9,0,0), Time(9,30,0))
+# a.add(TimePeriod(Time(1, 0, 0), Time(2, 30, 0)))
+a.add(b)
 # a.add(TimePeriod(Time(13,0,0), Time(13,30,0)))
+
+print(a.busy_times)
+
+a.cancel(b)
 
 print(a.busy_times)
