@@ -99,7 +99,7 @@ class TimePeriod:
         return f'|{self.start} - {self.end} ({self.__len__()})|'
 
 
-class DayTimes:
+class Day:
     busy_times = []
     days = [
         'saturday',
