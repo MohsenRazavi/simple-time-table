@@ -24,7 +24,7 @@ class Time:
         if self.m > other.m:
             return True
         if self.s > self.s:
-            return True``
+            return True
         return False
 
 
@@ -36,4 +36,46 @@ class Time:
         if self.s < self.s:
             return True
         return False
+
+    def __sub__(self, other):
+
+        if self > other:
+            s = self.s - other.s
+            if s < 0:
+                s += 60
+                self.m -= 1
+            m = self.m - other.m
+            if m < 0:
+                m += 60
+                self.h -= 1
+            h = self.h - other.h
+        else :
+            s = other.s - self.s
+            if s < 0:
+                s += 60
+                other.m -= 1
+            m = other.m - self.m
+            if m < 0:
+                m += 60
+                other.h -= 1
+            h = other.h - self.h
+
+        return Time(h, m, s)
+
+
+class TimePeriod:
+
+    def __init__(self, start_time, end_time):
+        if end_time < start_time or start_time > end_time:
+            raise ValueError('Invalid times')
+        self.start = start_time
+        self.end = end_time
+
+    def __len__(self):
+        return self.end - self.start
+
+    def __str__(self):
+        return f'{self.start} - {self.end} ({self.__len__()})'
+
+
 
