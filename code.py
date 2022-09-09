@@ -32,7 +32,7 @@ class Time:
             return True
         elif self.m < other.m:
             return False
-        
+
         if self.s > other.s:
             return True
         elif self.s < other.s:
@@ -49,7 +49,7 @@ class Time:
             return True
         elif self.m > other.m:
             return False
-        
+
         if self.s < other.s:
             return True
         elif self.s > other.s:
@@ -94,7 +94,7 @@ class TimePeriod:
 
     def __str__(self):
         return f'{self.start} - {self.end} ({self.__len__()})'
-    
+
     def __repr__(self):
         return f'|{self.start} - {self.end} ({self.__len__()})|'
 
@@ -111,22 +111,23 @@ class Day:
         'friday'
     ]
 
-    def __init__(self, day_name, start_day_time, end_day_time):
+    def __init__(self, day_name, start_day_time, end_day_time, is_closed):
         if day_name.lower() not in self.days:
             raise Exception('This day does not exists')
         self.day = day_name
         self.start = start_day_time
         self.end = end_day_time
+        self.closed = is_closed
 
     def __str__(self):
         return f'{self.day} plan : {self.busy_times}'
 
-    def check_time(self,**kwargs):
+    def check_time(self, **kwargs):
         res = True
-        
+
         time_period = kwargs['time_period']
         last_time_period_in_day = kwargs['last_time_period_in_day']
-        try :
+        try:
             second_last_time_period_in_day = kwargs['second_last_time_period_in_day']
         except:
             pass
@@ -135,7 +136,7 @@ class Day:
                 res = False
             if second_last_time_period_in_day.start < time_period.end < second_last_time_period_in_day.end:
                 res = False
-        
+
         if time_period.start < self.start:
             res = False
         if time_period.end > self.end or time_period.start > self.end:
@@ -144,21 +145,39 @@ class Day:
             res = False
         if last_time_period_in_day.end > time_period.end > last_time_period_in_day.start:
             res = False
-
+        print(res)
         return res
 
     def add(self, time_period):
-        try:
-            last_time_period_in_day = self.busy_times[-1]
-            # try:
-            #     second_last_time_period_in_day = self.busy_times[-2]
-            # except:
-            #     pass
-        except:
-            self.busy_times.append(time_period)
+        if self.closed:
+            print('This day is shutdown')
         else:
-            if self.check_time(time_period=time_period, last_time_period_in_day=last_time_period_in_day,):
-                self.busy_times.append(time_period)
+            try:
+                last_time_period_in_day = self.busy_times[-1]
+                # try:
+                #     second_last_time_period_in_day = self.busy_times[-2]
+                # except:
+                #     pass
+            except:
+                if not(time_period.start < self.start):
+                    if not(time_period.end > self.end or time_period.start > self.end):
+                        self.busy_times.append(time_period)
+                    else:
+                        print(f'This time is busy ({time_period})')
+                else:
+                    print(f'This time is busy ({time_period})')
+                        
             else:
-                print(f'This time is busy ({time_period})')
+                if self.check_time(time_period=time_period, last_time_period_in_day=last_time_period_in_day,):
+                    self.busy_times.append(time_period)
+                else:
+                    print(f'This time is busy ({time_period})')
 
+
+a = Day('saturday', Time(7, 0, 0), Time(12, 0, 0), False)
+
+a.add(TimePeriod(Time(1, 0, 0), Time(2, 30, 0)))
+# a.add(TimePeriod(Time(9,0,0), Time(9,30,0)))
+# a.add(TimePeriod(Time(13,0,0), Time(13,30,0)))
+
+print(a.busy_times)
